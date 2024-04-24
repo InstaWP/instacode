@@ -1,0 +1,102 @@
+{
+  "name": "instacode",
+  "displayName": "InstaWP VSCode Extension",
+  "publisher": "instawp",
+  "description": "Remotely edit WordPress sites on InstaWP inside VSCode",
+  "version": "0.8.0",
+  "engines": {
+    "vscode": "^1.83.0"
+  },
+  "repository": "https://github.com/InstaWP/instacode",
+  "icon": "images/instawp.png",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./extension.js",
+  "browser": "./extension.js",
+  "contributes": {
+    "uriHandlers": [
+      {
+        "uri": "instacode",
+        "title": "InstaCode URL Handler"
+      }
+    ],
+    "commands": [
+      {
+        "command": "extension.connectSFTP",
+        "title": "Connect to InstaWP Site"
+      },
+      {
+        "command": "extension.uploadFile",
+        "title": "Upload File"
+      },
+      {
+        "command": "extension.refreshSftpExplorer",
+        "title": "Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "extension.createFolder",
+        "title": "Create New Folder"
+      },
+      {
+        "command": "extension.createNewFile",
+        "title": "New File"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "when": "view == sftpExplorer && viewItem == folder",
+          "command": "extension.uploadFile"
+        },
+        {
+          "when": "view == sftpExplorer && viewItem == folder",
+          "command": "extension.createFolder"
+        },
+        {
+          "when": "view == sftpExplorer && viewItem == folder",
+          "command": "extension.createNewFile"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "extension.refreshSftpExplorer",
+          "when": "view == sftpExplorer",
+          "group": "navigation",
+          "icon": "$(loading)"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "sftpExplorer",
+          "name": "InstaWP Explorer",
+          "title": "InstaWP Explorer"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.3",
+    "@types/node": "18.x",
+    "@types/vscode": "^1.83.0",
+    "@vscode/test-electron": "^2.3.6",
+    "eslint": "^8.52.0",
+    "glob": "^10.3.10",
+    "mocha": "^10.2.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "ssh2": "^1.14.0",
+    "ssh2-sftp-client": "^9.1.0"
+  }
+}
