@@ -32,7 +32,7 @@ class SftpTreeDataProvider {
         if (element.collapsibleState === vscode.TreeItemCollapsibleState.None) {
             // This is a file, set the command to open it when clicked
             element.command = {
-                command: 'extension.openFile',
+                command: 'instacode.openFile',
                 title: "Open File",
                 arguments: [element.resourceUri]
             };
@@ -241,9 +241,8 @@ const sftpProvider = new SftpTreeDataProvider();
 function activate(context) {
 
 	// console.log('Congratulations, your extension "instacode" is now active!');
-
-	let disposable = vscode.commands.registerCommand('extension.connectSFTP', () => {
-
+  	let disposable = vscode.commands.registerCommand('instacode.connectSFTP', () => {
+        vscode.commands.executeCommand('vscode.hideFoldersExplorer');
         vscode.window.showInputBox({prompt: 'Enter the InstaWP access key for site'}).then((accessKey) => {
             connectSFTP(accessKey);
         });
@@ -253,7 +252,7 @@ function activate(context) {
 
 	context.subscriptions.push(disposable);
 
-	let openFileDisposable = vscode.commands.registerCommand('extension.openFile', (fileUri) => {
+	let openFileDisposable = vscode.commands.registerCommand('instacode.openFile', (fileUri) => {
         sftpProvider.openFile(fileUri);
     });
 
@@ -268,7 +267,7 @@ function activate(context) {
     });
 
      // create new file command
-     context.subscriptions.push(vscode.commands.registerCommand('extension.createNewFile', async (treeItem) => {
+     context.subscriptions.push(vscode.commands.registerCommand('instacode.createNewFile', async (treeItem) => {
         const directoryPath = treeItem.resourceUri.path;
 
         // Prompt the user to enter a file name
@@ -290,7 +289,7 @@ function activate(context) {
         }
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand('extension.uploadFile', async (treeItem) => {
+    context.subscriptions.push(vscode.commands.registerCommand('instacode.uploadFile', async (treeItem) => {
         // treeItem contains the context of the folder that was right-clicked
         const targetFolder = treeItem.resourceUri.path;
     
@@ -305,7 +304,7 @@ function activate(context) {
     }));
 
     // refresh command
-    let refreshCommandDisposable = vscode.commands.registerCommand('extension.refreshSftpExplorer', () => {
+    let refreshCommandDisposable = vscode.commands.registerCommand('instacode.refreshSftpExplorer', () => {
         sftpProvider.refresh();
         vscode.window.showInformationMessage('InstaWP Explorer refreshed');
     });
@@ -314,7 +313,7 @@ function activate(context) {
 
 
     //new Folder function
-    let createFolderDisposable = vscode.commands.registerCommand('extension.createFolder', async (treeItem) => {
+    let createFolderDisposable = vscode.commands.registerCommand('instacode.createFolder', async (treeItem) => {
         const folderPath = treeItem.resourceUri.path;
 
         // Prompt the user to enter a folder name
@@ -350,10 +349,6 @@ function activate(context) {
 
         }
     }));
-
-   
-   
-
 }
 
 const sftp = new SFTPClient();
