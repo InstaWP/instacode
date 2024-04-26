@@ -24,24 +24,24 @@
     ],
     "commands": [
       {
-        "command": "extension.connectSFTP",
+        "command": "instacode.connectSFTP",
         "title": "Connect to InstaWP Site"
       },
       {
-        "command": "extension.uploadFile",
+        "command": "instacode.uploadFile",
         "title": "Upload File"
       },
       {
-        "command": "extension.refreshSftpExplorer",
+        "command": "instacode.refreshSftpExplorer",
         "title": "Refresh",
         "icon": "$(refresh)"
       },
       {
-        "command": "extension.createFolder",
+        "command": "instacode.createFolder",
         "title": "Create New Folder"
       },
       {
-        "command": "extension.createNewFile",
+        "command": "instacode.createNewFile",
         "title": "New File"
       }
     ],
@@ -49,20 +49,20 @@
       "view/item/context": [
         {
           "when": "view == sftpExplorer && viewItem == folder",
-          "command": "extension.uploadFile"
+          "command": "instacode.uploadFile"
         },
         {
           "when": "view == sftpExplorer && viewItem == folder",
-          "command": "extension.createFolder"
+          "command": "instacode.createFolder"
         },
         {
           "when": "view == sftpExplorer && viewItem == folder",
-          "command": "extension.createNewFile"
+          "command": "instacode.createNewFile"
         }
       ],
       "view/title": [
         {
-          "command": "extension.refreshSftpExplorer",
+          "command": "instacode.refreshSftpExplorer",
           "when": "view == sftpExplorer",
           "group": "navigation",
           "icon": "$(loading)"

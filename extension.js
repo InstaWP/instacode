@@ -32,7 +32,7 @@ class SftpTreeDataProvider {
         if (element.collapsibleState === vscode.TreeItemCollapsibleState.None) {
             // This is a file, set the command to open it when clicked
             element.command = {
-                command: 'extension.openFile',
+                command: 'instacode.openFile',
                 title: "Open File",
                 arguments: [element.resourceUri]
             };
@@ -66,8 +66,9 @@ class SftpTreeDataProvider {
             // Use the SFTP client to download the file
             await sftp.fastGet(fileUri.path, localPath);
 
+            const normalPath = normalizePath(localPath);
             // Store the mapping between the local file and the SFTP file path along with relative path
-            openedSftpFiles.set(localPath, { serverPath: fileUri.path, relativePath: fileUri.path });
+            openedSftpFiles.set(normalPath, { serverPath: fileUri.path, relativePath: fileUri.path });
 
 
             return localPath;
@@ -131,7 +132,6 @@ class SftpTreeDataProvider {
 			// If no element is provided, just return an empty array.
 			return [];
 		}
-		// console.log(element, 'the element');
 		
 		try {
 
@@ -177,16 +177,13 @@ class SftpTreeDataProvider {
         let currentParent = null; // Keep track of the current parent element
 
         for (const segment of segments) {
-            console.log(segment, 'the segment');
             try {
                 // Dynamically fetch the children based on the current parent
                 const children = await this.getChildren(currentParent);
                 // Find the child that matches our current segment
                 const childToReveal = children.find(child => child.label === segment);
                 if (childToReveal) {
-                    console.log(childToReveal, 'the child to reveal'   );
                     // Use the treeView.reveal() method to expand and reveal the child item
-                    // console.log(sftpProvider);
                     await sftpProvider.treeView.reveal(childToReveal, { expand: 1, focus: true, select: true });
                     currentParent = childToReveal; // Update the current parent to the revealed child for the next iteration
                 } else {
@@ -240,10 +237,8 @@ const sftpProvider = new SftpTreeDataProvider();
  */
 function activate(context) {
 
-	// console.log('Congratulations, your extension "instacode" is now active!');
-
-	let disposable = vscode.commands.registerCommand('extension.connectSFTP', () => {
-
+	let disposable = vscode.commands.registerCommand('instacode.connectSFTP', () => {
+        //vscode.commands.executeCommand('vscode.hideFoldersExplorer');
         vscode.window.showInputBox({prompt: 'Enter the InstaWP access key for site'}).then((accessKey) => {
             connectSFTP(accessKey);
         });
@@ -253,7 +248,7 @@ function activate(context) {
 
 	context.subscriptions.push(disposable);
 
-	let openFileDisposable = vscode.commands.registerCommand('extension.openFile', (fileUri) => {
+	let openFileDisposable = vscode.commands.registerCommand('instacode.openFile', (fileUri) => {
         sftpProvider.openFile(fileUri);
     });
 
@@ -261,14 +256,13 @@ function activate(context) {
 
     // Event listener for saving documents
 	vscode.workspace.onDidSaveTextDocument(document => {
-		console.log(document.uri);
-        if (isSftpDocument(document)) {
+		if (isSftpDocument(document)) {
             saveChangesToSftpServer(document);
         }
     });
 
      // create new file command
-     context.subscriptions.push(vscode.commands.registerCommand('extension.createNewFile', async (treeItem) => {
+     context.subscriptions.push(vscode.commands.registerCommand('instacode.createNewFile', async (treeItem) => {
         const directoryPath = treeItem.resourceUri.path;
 
         // Prompt the user to enter a file name
@@ -290,7 +284,7 @@ function activate(context) {
         }
     }));
 
-    context.subscriptions.push(vscode.commands.registerCommand('extension.uploadFile', async (treeItem) => {
+    context.subscriptions.push(vscode.commands.registerCommand('instacode.uploadFile', async (treeItem) => {
         // treeItem contains the context of the folder that was right-clicked
         const targetFolder = treeItem.resourceUri.path;
     
@@ -305,7 +299,7 @@ function activate(context) {
     }));
 
     // refresh command
-    let refreshCommandDisposable = vscode.commands.registerCommand('extension.refreshSftpExplorer', () => {
+    let refreshCommandDisposable = vscode.commands.registerCommand('instacode.refreshSftpExplorer', () => {
         sftpProvider.refresh();
         vscode.window.showInformationMessage('InstaWP Explorer refreshed');
     });
@@ -314,7 +308,7 @@ function activate(context) {
 
 
     //new Folder function
-    let createFolderDisposable = vscode.commands.registerCommand('extension.createFolder', async (treeItem) => {
+    let createFolderDisposable = vscode.commands.registerCommand('instacode.createFolder', async (treeItem) => {
         const folderPath = treeItem.resourceUri.path;
 
         // Prompt the user to enter a folder name
@@ -341,7 +335,6 @@ function activate(context) {
     //deep linkng
     context.subscriptions.push(vscode.window.registerUriHandler({
         handleUri(uri) {
-            // console.log(uri, 'the uri' );
             const params = new URLSearchParams(uri.query);
             if(params.has('access_key')) {
                 const accessKey = params.get('access_key');
@@ -350,10 +343,6 @@ function activate(context) {
 
         }
     }));
-
-   
-   
-
 }
 
 const sftp = new SFTPClient();
@@ -386,7 +375,6 @@ async function connectSFTP(accessKey) {
         }, { headers })
         .then(response => {
             // Handle success
-            console.log(response.data);
             vscode.window.showInformationMessage('InstaWP Site identified. Connecting to site...', { modal: false });
             const sftpDetails = response.data;
             connectToServer(sftpDetails.host, sftpDetails.port, sftpDetails.username, sftpDetails.password);
@@ -412,20 +400,15 @@ async function connectToServer(host, port, user, password) {
 		// then just return it directly.
         // open this path '/home/' + user + '/web/' + host + '/public_html'
         // return sftp.
-        // console.log('hy');
         return sftp.list('/');
     }).then(currentDir => {
     
-		// console.log(data, 'the data info');
 		vscode.window.showInformationMessage('Connected to InstaWP site', { modal: false });
     	// vscode.window.registerTreeDataProvider('sftpExplorer', sftpProvider);
 
         const treeView = vscode.window.createTreeView('sftpExplorer', { treeDataProvider: sftpProvider });
         sftpProvider.setTreeView(treeView); // Pass the TreeView to the SftpTreeDataProvider
     
-    
-
-        // console.log(currentDir);
         //check if currentDir has a folder 'web'
         const webFolder = currentDir.find(item => item.name === 'web' && item.type === 'd');
 
@@ -502,8 +485,12 @@ async function connectToServer(host, port, user, password) {
 function isSftpDocument(document) {
     // Implement logic to determine if the document is from the SFTP server
     // read the opensftpfiles map and check if the document.uri.fsPath is present in the map
+    const normalPath = normalizePath(document.uri.fsPath);
+    return openedSftpFiles.has(normalPath);
+}
 
-    return openedSftpFiles.has(document.uri.fsPath);
+function normalizePath(filePath) {
+    return path.normalize(filePath).toLowerCase(); // Normalize and convert to lower case for consistency
 }
 
 // Implement the createNewFile function
@@ -527,9 +514,9 @@ async function createNewFile(parentFolderPath, fileName) {
 
 async function saveChangesToSftpServer(document) {
     try {
-        console.log(document.uri.fsPath);
         // Retrieve the server and relative paths
-        const paths = openedSftpFiles.get(document.uri.fsPath);
+        const normalPath = normalizePath(document.uri.fsPath);
+        const paths = openedSftpFiles.get(normalPath);
         if (!paths) {
             throw new Error("File is not from the SFTP server.");
         }
