@@ -361,7 +361,7 @@ async function connectSFTP(accessKey) {
         }
 
 
-        const apiUrl = `https://app.instawp.io/api/v2/sites/sftp-status-with-key`;
+        const apiUrl = `https://stage.instawp.io/api/v2/sites/sftp-status-with-key`;
         
         // Set headers
         const headers = {
@@ -402,8 +402,7 @@ async function connectToServer(host, port, user, password) {
         // return sftp.
         return sftp.list('/');
     }).then(currentDir => {
-    
-		vscode.window.showInformationMessage('Connected to InstaWP site', { modal: false });
+        vscode.window.showInformationMessage('Connected to InstaWP site', { modal: false });
     	// vscode.window.registerTreeDataProvider('sftpExplorer', sftpProvider);
 
         const treeView = vscode.window.createTreeView('sftpExplorer', { treeDataProvider: sftpProvider });
@@ -412,28 +411,14 @@ async function connectToServer(host, port, user, password) {
         //check if currentDir has a folder 'web'
         const webFolder = currentDir.find(item => item.name === 'web' && item.type === 'd');
 
-        //if webfolder is undefined, then open the path /home/username/web/host/public_html, otherwise open web/host/public_html
-        if(webFolder === undefined) {
-            //ssh is enabaled
-            const rootPath = '/home/' + user;
+        const rootPath = webFolder ? '/web/' + host : '/home/' + user ;
+        
+        // Set the root of your tree data provider to the specific directory
+        sftpProvider.rootPath = rootPath;
 
-            // Set the root of your tree data provider to the specific directory
-            sftpProvider.rootPath = rootPath;
-
-            // // Refresh the tree view to show the contents of the directory
-            sftpProvider.refresh();
-        } else {
-            //ssh is disabled
-            const rootPath = '/web/' + host + '/public_html';
-
-            // Set the root of your tree data provider to the specific directory
-            // TODO: Implement the logic to set the root path of the tree data provider
-            // sftpProvider.openFolderAtPath(rootPath);
-
-            // // Refresh the tree view to show the contents of the directory
-            // sftpProvider.refresh();
-        }
-
+        // // Refresh the tree view to show the contents of the directory
+        sftpProvider.refresh();
+       
         // ssh.on('ready', () => {
         //     console.log('SSH Client :: ready');
         //     ssh.shell((err, stream) => {

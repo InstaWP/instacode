@@ -29,20 +29,20 @@
       },
       {
         "command": "instacode.uploadFile",
-        "title": "Upload File"
+        "title": "InstaWP: Upload File"
       },
       {
         "command": "instacode.refreshSftpExplorer",
-        "title": "Refresh",
+        "title": "InstaWP: Refresh",
         "icon": "$(refresh)"
       },
       {
         "command": "instacode.createFolder",
-        "title": "Create New Folder"
+        "title": "InstaWP: Create New Folder"
       },
       {
         "command": "instacode.createNewFile",
-        "title": "New File"
+        "title": "InstaWP: New File"
       }
     ],
     "menus": {
