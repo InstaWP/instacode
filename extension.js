@@ -480,7 +480,7 @@ function normalizePath(filePath) {
 
 // Implement the createNewFile function
 async function createNewFile(parentFolderPath, fileName) {
-    const newFilePath = path.join(parentFolderPath, fileName);
+    const newFilePath = (path.join(parentFolderPath, fileName)).replace(/\\/g, '/')
 
     try {
         // Create the new file on the SFTP server
