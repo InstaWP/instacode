@@ -526,7 +526,7 @@ async function uploadFileToSftp(localFilePath, targetFolder) {
         // Get the file name
         const fileName = path.basename(localFilePath);
         // Combine with the target folder path
-        const remoteFilePath = path.join(targetFolder, fileName);
+        const remoteFilePath = path.join(targetFolder, fileName).replace(/\\/g, '/');
         // Perform the upload
         await sftp.put(localFilePath, remoteFilePath);
         vscode.window.showInformationMessage(`File uploaded: ${remoteFilePath}`, { modal: false });
@@ -536,7 +536,7 @@ async function uploadFileToSftp(localFilePath, targetFolder) {
 }
 
 async function createNewFolder(parentFolderPath, folderName) {
-    const newFolderPath = path.join(parentFolderPath, folderName);
+    const newFolderPath = path.join(parentFolderPath, folderName).replace(/\\/g, '/');
 
     try {
         // Create the new folder on the SFTP server
