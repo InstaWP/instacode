@@ -3,7 +3,7 @@
   "displayName": "InstaWP VSCode Extension",
   "publisher": "instawp",
   "description": "Remotely edit WordPress sites on InstaWP inside VSCode",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "engines": {
     "vscode": "^1.83.0"
   },
