@@ -361,7 +361,7 @@ async function connectSFTP(accessKey) {
         }
 
 
-        const apiUrl = `https://stage.instawp.io/api/v2/sites/sftp-status-with-key`;
+        const apiUrl = `https://app.instawp.io/api/v2/sites/sftp-status-with-key`;
         
         // Set headers
         const headers = {
