@@ -1,8 +1,11 @@
 # Change Log
 
 InstaWP VS Code Extension - Change log.
+## [0.11.0] - 2024-06-25
 
-## [0.9.0] - 2024-04-26
+- Fixed: File creation issue on Windows 
+
+## [0.10.0] - 2024-04-26
 
 - Fixed: File Save issue on Windows 
 
