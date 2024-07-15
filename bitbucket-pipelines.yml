@@ -1,0 +1,17 @@
+image: atlassian/default-image:latest
+
+pipelines:
+  custom:
+    merge-branches:
+      - step:
+          name: Merge Branches
+          script:
+            - apt-get update && apt-get install -y git
+            - git config --global user.email "vikas@instawp.com"
+            - git config --global user.name "Vikas"
+            - git clone https://$BITBUCKET_USERNAME:$BITBUCKET_APP_PASSWORD@bitbucket.org/instawpio/instawp.git
+            - cd instawp
+            - git checkout stage
+            - git pull origin stage
+            - git merge origin/dev
+            - git push origin stage
