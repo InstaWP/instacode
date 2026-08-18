@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# DEPRECATED -- releases now run through the Release GitHub Actions workflow
+# (.github/workflows/release.yml). See RELEASING.md. Kept only as a fallback for
+# when Actions is unavailable; note the sed below is macOS-only and this path
+# skips the tag/version and non-production-host guards the workflow enforces.
+#
 
 # Define the file to check
 FILE="extension.js"

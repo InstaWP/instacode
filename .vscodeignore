@@ -1,0 +1,34 @@
+# vsce already drops devDependencies. This trims what is left: the published
+# 0.12.0 VSIX was 6.6 MB across 673 files, of which 658 were node_modules --
+# largely source maps and package documentation that never execute.
+
+.github/**
+.vscode/**
+test/**
+jsconfig.json
+publish.sh
+RELEASING.md
+**/.DS_Store
+
+node_modules/**/*.map
+node_modules/**/*.md
+node_modules/**/test/**
+node_modules/**/tests/**
+node_modules/**/.github/**
+node_modules/**/example/**
+node_modules/**/examples/**
+
+# Compiled native artifacts. ssh2's C++ bindings (sshcrypto.node) and
+# cpu-features are optionalDependencies that ssh2 loads inside a try/catch and
+# falls back to pure JS when absent -- see the `catch {}` around the require in
+# node_modules/ssh2/lib/protocol/crypto.js. The published 0.12.0 VSIX shipped
+# 6 MB of .node/.o/.a files built on whichever machine ran the release, so the
+# artifact differed by builder and every user on a different platform silently
+# used the JS fallback anyway. Excluding them makes the package reproducible
+# and identical for everyone.
+node_modules/**/build/**
+node_modules/**/*.node
+node_modules/**/*.o
+node_modules/**/*.a
+node_modules/**/binding.gyp
+node_modules/**/deps/**
