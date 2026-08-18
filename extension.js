@@ -377,7 +377,7 @@ async function connectSFTP(accessKey) {
             // Handle success
             vscode.window.showInformationMessage('InstaWP Site identified. Connecting to site...', { modal: false });
             const sftpDetails = response.data;
-            connectToServer(sftpDetails.host, sftpDetails.port, sftpDetails.username, sftpDetails.password);
+            connectToServer(sftpDetails.host, sftpDetails.port, sftpDetails.username, sftpDetails.password, sftpDetails.site_dir);
         })
         .catch(error => {
             // Handle error
@@ -389,7 +389,7 @@ async function connectSFTP(accessKey) {
 
 }
 
-async function connectToServer(host, port, user, password) {
+async function connectToServer(host, port, user, password, siteDir) {
     await sftp.connect({
 		host,
 		port,
@@ -411,7 +411,12 @@ async function connectToServer(host, port, user, password) {
         //check if currentDir has a folder 'web'
         const webFolder = currentDir.find(item => item.name === 'web' && item.type === 'd');
 
-        const rootPath = webFolder ? '/web/' + host : '/home/' + user ;
+        // `host` is the SFTP connection target, not the directory name -- the two
+        // only coincide on some sites. The directory is named after the site's
+        // subdomain, which the API returns as `site_dir`; fall back to `host` for
+        // an API that predates that field.
+        // Jailed users are chrooted to their home, so the jail root IS the home dir.
+        const rootPath = webFolder ? '/web/' + (siteDir || host) : '/' ;
         
         // Set the root of your tree data provider to the specific directory
         sftpProvider.rootPath = rootPath;

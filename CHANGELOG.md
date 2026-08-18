@@ -1,6 +1,11 @@
 # Change Log
 
 InstaWP VS Code Extension - Change log.
+## [0.13.0] - 2026-08-18
+
+- Fixed: The InstaWP Explorer could open empty with a `No such file` error instead of listing the site's files. The extension was deriving the site directory from the SFTP connection address rather than from the site directory the API reports.
+- Fixed: The fallback tree root pointed outside the SFTP jail on some sites.
+
 ## [0.11.0] - 2024-06-25
 
 - Fixed: File creation issue on Windows 
