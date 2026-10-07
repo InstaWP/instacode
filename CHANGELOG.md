@@ -1,6 +1,10 @@
 # Change Log
 
 InstaWP VS Code Extension - Change log.
+## [0.13.1] - 2026-09-30
+
+- Fixed: Saving a file failed with `put: Re-thrown: isDate is not a function` on current VS Code. The bundled `ssh2` 1.14.0 called `util.isDate`, which the Node.js runtime in current VS Code no longer provides. Upgraded to `ssh2` 1.17.0.
+
 ## [0.13.0] - 2026-08-18
 
 - Fixed: The InstaWP Explorer could open empty with a `No such file` error instead of listing the site's files. The extension was deriving the site directory from the SFTP connection address rather than from the site directory the API reports.
